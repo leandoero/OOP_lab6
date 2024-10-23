@@ -2,6 +2,8 @@
 #include <vector>
 using namespace std;
 
+//для структуры нужно будет переопределить оператор ==
+
 template<typename T>
 class Set {
 	struct Node {
