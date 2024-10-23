@@ -7,22 +7,27 @@ class Set {
 		T el;
 		Node* next;
 
-		Node(T _el) : el(_el), next{ nullptr }();
+		Node(T _el) : el(_el), next{ nullptr } {};
 	};
 	Node* head;
 
 public:
-	Set() :head{ nullptr }();
+	Set() :head{ nullptr } {};
 	void addEl(T el);
 	void removeEl();
 	void removeAll();
 	void removeHead();
-	void print() const;
-	void isEmpty();
+	void print();
+	bool isEmpty();
 };
 
 template<typename T>
-void Set<T>::isEmpty() {
+void unionOfSets(Set<T>* first, Set<T>* second) {
+
+}
+
+template<typename T>
+bool Set<T>::isEmpty() {
 	return head == nullptr;
 }
 template<typename T>
@@ -78,7 +83,7 @@ void Set<T>::removeEl() {
 	temp = nullptr;
 }
 template<typename T>
-void Set<T>::print() const {
+void Set<T>::print() {
 	if (isEmpty()) {
 		return;
 	}
@@ -89,5 +94,5 @@ void Set<T>::print() const {
 	}
 }
 int main() {
-
+	Set<int>* first = new Set<int>();
 }
