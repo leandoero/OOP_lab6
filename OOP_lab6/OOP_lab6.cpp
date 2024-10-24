@@ -1,329 +1,220 @@
-﻿#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <ctime> 
-using namespace std;
-
-//для структуры нужно будет переопределить оператор ==
-
-string names[5] = { "Vladimir", "Ivan", "Nikolay", "Roman", "Maxim" };
-int ages[5] = { 20, 21, 22, 23, 25 };
-
-struct Student {
-	int age;
-	string name;
-
-	Student() {
-		age = ages[rand() % 5];
-		name = names[rand() % 5];
-	}
-	friend ostream& operator<<(ostream& os, const Student& student) {
-		os << "name : " << student.name << " age: " << student.age << endl;
-		return os;
-	}
-	bool operator==(const Student& other);
-};
-
-bool Student::operator==(const Student& other) {
-	return ((age == other.age) && (name == other.name));
-}
+﻿#include "Set.h"
+#include "Student.h"
 
 template<typename T>
-class Set {
-	struct Node {
-		T el;
-		Node* next;
+void workingWithMultiple(Set<T>* set) {
+	int index;
+	do {
+		system("cls");
+		cout << "1. Добавить элемент\n" <<
+			"2. Удалить элемент\n" <<
+			"3. Удалить полностью\n" <<
+			"4. Удалить головной элемент\n" <<
+			"5. Проверка на пустоту\n" <<
+			"6. Распечатать значения\n" <<
+			"7. Выйти в меню\n" << endl;
+		cout << "Ввод: ";
+		cin >> index;
 
-		Node(T _el) : el(_el), next{ nullptr } {};
-	};
-	Node* head;
-
-public:
-	Set() :head{ nullptr } {};
-	void addEl(T el);
-	void removeEl();
-	void removeAll();
-	void removeHead();
-	void print();
-	bool isEmpty();
-
-	void unionOfSets(Set<T>*, Set<T>*);
-	void intersectionOfSets(Set<T>*, Set<T>*);
-	void differenceOfSets(Set<T>*, Set<T>*);
-	void symmetricDifference(Set<T>*, Set<T>*);
-	bool subsetOfSets(Set<T>*, Set<T>*);
-
-	~Set() {
-		removeAll();
-	}
-};
-
-template<typename T>
-void Set<T>::unionOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> mas;
-	vector<T> forResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
-	while (temp) {
-		mas.push_back(temp->el);
-		temp = temp->next;
-	}
-	while (temp_2) {
-		mas.push_back(temp_2->el);
-		temp_2 = temp_2->next;
-	}
-	for (int i = 0; i < mas.size(); i++)
-	{
-		bool dobl = false;
-		for (int j = 0; j < forResult.size(); j++)
+		switch (index)
 		{
-			if (mas[i] == forResult[j]) {
-				dobl = true;
+		case 1: {
+			if constexpr (std::is_same_v<T, int>) {
+				system("cls");
+				int num;
+				cout << "Введите число: ";
+				cin >> num;
+				set->addEl(num);
+				system("pause");
 				break;
 			}
-		}
-		if (dobl == false) {
-			forResult.push_back(mas[i]);
-		}
-	}
-
-	for (int i = 0; i < forResult.size(); i++)
-	{
-		cout << forResult[i] << endl;
-	}
-}
-
-template<typename T>
-void Set<T>::intersectionOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> masFirst;
-	vector<T> masSecond;
-	vector<T> forResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
-	while (temp) {
-		masFirst.push_back(temp->el);
-		temp = temp->next;
-	}
-	while (temp_2) {
-		masSecond.push_back(temp_2->el);
-		temp_2 = temp_2->next;
-	}
-	for (int i = 0; i < masFirst.size(); i++)
-	{
-		bool flag = false;
-		for (int j = 0; j < masSecond.size(); j++)
-		{
-			if (masFirst[i] == masSecond[j]) {
-				flag = true;
-				for (int h = 0; h < forResult.size(); h++)
-				{
-					if (masFirst[i] == forResult[h]) {
-						flag = false;
-						break;
-					}
-				}
-			}
-		}
-		if (flag) {
-			forResult.push_back(masFirst[i]);
-		}
-	}
-
-	for (int i = 0; i < forResult.size(); i++)
-	{
-		cout << forResult[i] << endl;
-	}
-}
-
-template<typename T>
-void Set<T>::differenceOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> masForFirst, masForSecond, masForResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
-	while (temp) {
-		masForFirst.push_back(temp->el);
-		temp = temp->next;
-	}
-	while (temp_2) {
-		masForSecond.push_back(temp_2->el);
-		temp_2 = temp_2->next;
-	}
-	for (int i = 0; i < masForFirst.size(); i++)
-	{
-		bool dobl = false;
-		for (int j = 0; j < masForSecond.size(); j++)
-		{
-			if (masForFirst[i] == masForSecond[j]) {
-				dobl = true;
-				break;
-			}
-		}
-		if (!dobl) {
-			masForResult.push_back(masForFirst[i]);
-		}
-	}
-	for (int i = 0; i < masForResult.size(); i++)
-	{
-		cout << masForResult[i] << endl;
-	}
-}
-
-template<typename T>
-void Set<T>::symmetricDifference(Set<T>* first, Set<T>* second) {
-	vector<T>mas;
-	vector<T>masForResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
-	while (temp) {
-		mas.push_back(temp->el);
-		temp = temp->next;
-	}
-	while (temp_2) {
-		mas.push_back(temp_2->el);
-		temp_2 = temp_2->next;
-	}
-	for (int i = 0; i < mas.size(); i++)
-	{
-		bool dubl = true;
-		for (int j = 0; j < mas.size(); j++) {
-			if (mas[i] == mas[j] && (i != j)) {
-				dubl = false;
-				break;
-			}
-		}
-		if (dubl) {
-			masForResult.push_back(mas[i]);
-		}
-	}
-	for (int i = 0; i < masForResult.size(); i++)
-	{
-		cout << masForResult[i] << endl;
-	}
-}
-
-template<typename T>
-bool Set<T>::subsetOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> masForFirst, masForSecond;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
-	while (temp) {
-		masForFirst.push_back(temp->el);
-		temp = temp->next;
-	}
-	while (temp_2) {
-		masForSecond.push_back(temp_2->el);
-		temp_2 = temp_2->next;
-	}
-	bool flag = false;
-	for (int i = 0; i < masForFirst.size(); i++)
-	{
-		for (int j = 0; j < masForSecond.size(); j++) {
-			if (masForFirst[i] == masForSecond[j]) {
-				flag = true;
+			else if constexpr (std::is_same_v<T, double>) {
+				system("cls");
+				double num;
+				cout << "Введите число: ";
+				cin >> num;
+				set->addEl(num);
+				system("pause");
 				break;
 			}
 			else {
-				flag = false;
+				system("cls");
+				Student student;
+				set->addEl(student);
+				system("pause");
+				break;
 			}
 		}
-		if (flag == false) {
+		case 2: {
+			system("cls");
+			set->removeEl();
 			break;
 		}
-	}
-	if (flag) {
-		cout << "Первое множество является подмножеством второго множества" << endl;
-		return true;
-	}
-	else if (flag == false) {
-		cout << "Первое множество не является подмножеством второго множества" << endl;
-		return false;
-	}
+		case 3: {
+			system("cls");
+			set->removeAll();
+			break;
+		}
+		case 4: {
+			system("cls");
+			set->removeHead();
+			break;
+		}
+		case 5: {
+			system("cls");
+			cout << std::boolalpha;
+			set->isEmpty();
+			system("pause");
+			break;
+		}
+		case 6: {
+			system("cls");
+			set->print();
+			system("pause");
+			break;
+		}
+		default:
+			break;
+		}
+
+	} while (index != 7);
 }
 
 template<typename T>
-bool Set<T>::isEmpty() {
-	return head == nullptr;
+void StartProgram() {
+	Set<T>* setFirst = new Set<T>();
+	Set<T>* setSecond = new Set<T>();
+	int index;
+	do {
+		system("cls");
+		cout << "Меню: \n" <<
+			"1. Создать множество №1\n" <<
+			"2. Создать множество №2\n" <<
+			"3. Операции над множествами\n" <<
+			"4. Выход\n" << endl;
+		cout << "Ввод: ";
+		cin >> index;
+		switch (index)
+		{
+		case 1: {
+			system("cls");
+			workingWithMultiple(setFirst);
+			break;
+		}
+		case 2: {
+			system("cls");
+			workingWithMultiple(setSecond);
+			break;
+		}
+		case 3: {
+			int index;
+
+			if (setFirst == nullptr || setSecond == nullptr) {
+				cout << "Множества не созданы" << endl;
+			}
+			do {
+				system("cls");
+				cout << "1. Объединение множеств\n" <<
+					"2. Пересечение множеств\n" <<
+					"3. Разность множеств\n" <<
+					"4. Симметричная разность\n" <<
+					"5. Проверка на подмножество\n" <<
+					"6. Выйти в меню\n" << endl;
+				cout << "Ввод: ";
+				cin >> index;
+				switch (index)
+				{
+				case 1: {
+					system("cls");
+					setFirst->unionOfSets(setFirst, setSecond);
+					system("pause");
+					break;
+				}
+				case 2: {
+					system("cls");
+					setFirst->intersectionOfSets(setFirst, setSecond);
+					system("pause");
+					break;
+				}
+				case 3: {
+					system("cls");
+					setFirst->differenceOfSets(setFirst, setSecond);
+					system("pause");
+					break;
+				}
+				case 4: {
+					system("cls");
+					setFirst->symmetricDifference(setFirst, setSecond);
+					system("pause");
+					break;
+				}
+				case 5: {
+					int index;
+					system("cls");
+					cout << "1. Первое является подмножеством второго?\n" <<
+						"2. Второе является подножеством первого?\n" << endl;
+					cout << "Ввод: ";
+					cin >> index;
+					switch (index)
+					{
+					case 1: {
+						system("cls");
+						setFirst->subsetOfSets(setFirst, setSecond);
+						system("pause");
+						break;
+					}
+					case 2: {
+						system("cls");
+						setSecond->subsetOfSets(setSecond, setFirst);
+						system("pause");
+						break;
+					}
+					default:
+						break;
+					}
+					break;
+				}
+				default:
+					break;
+				}
+			} while (index != 6);
+		}
+		default:
+			break;
+		}
+	} while (index != 4);
+	delete setFirst;
+	delete setSecond;
+	setFirst = nullptr;
+	setSecond = nullptr;
 }
-template<typename T>
-void Set<T>::addEl(T el) {
-	Node* newEl = new Node(el);
-	if (head == nullptr) {
-		head = newEl;
-		return;
-	}
-	Node* cur = head;
-	while (cur->next) {
-		cur = cur->next;
-	}
-	cur->next = newEl;
-}
-template<typename T>
-void Set<T>::removeHead() {
-	if (isEmpty()) {
-		return;
-	}
-	Node* temp = head;
-	head = head->next;
-	delete temp;
-	temp = nullptr;
-}
-template<typename T>
-void Set<T>::removeAll() {
-	if (isEmpty()) {
-		return;
-	}
-	while (head) {
-		removeHead();
-	}
-}
-template<typename T>
-void Set<T>::removeEl() {
-	if (isEmpty()) {
-		return;
-	}
-	if (head->next == nullptr) {
-		delete head;
-		head = nullptr;
-		return;
-	}
-	Node* temp = head;
-	Node* cur = nullptr;
-	while (temp->next) {
-		cur = temp;
-		temp = temp->next;
-	}
-	cur->next = nullptr;
-	delete temp;
-	temp = nullptr;
-}
-template<typename T>
-void Set<T>::print() {
-	if (isEmpty()) {
-		return;
-	}
-	Node* temp = head;
-	while (temp) {
-		cout << temp->el << endl;
-		temp = temp->next;
-	}
-}
+
 int main() {
+	int index;
 	srand(static_cast<unsigned int>(time(0)));
 	setlocale(LC_ALL, "ru");
-	Set<Student>* first = new Set<Student>();
-	Student st1, st2, st3, st4, st5, st6, st7;
-	first->addEl(st1);
-	first->addEl(st2);
-	first->addEl(st3);
-	first->addEl(st4);
-	first->print();
-	cout << "---------------------" << endl;
-	Set<Student>* second = new Set<Student>();
-	second->addEl(st5);
-	second->addEl(st6);
-	second->addEl(st7);
-	second->print();
-	cout << "-----------------------" << endl;
-
-	first->intersectionOfSets(first, second);
+	cout << "Выберите тип для работы:\n" <<
+		"1. int\n" <<
+		"2. double\n" <<
+		"3. Student\n" << endl;
+	cout << "Ввод: ";
+	cin >> index;
+	switch (index)
+	{
+	case 1: {
+		StartProgram<int>();
+		break;
+	}
+	case 2: {
+		StartProgram<double>();
+		break;
+	}
+	case 3: {
+		StartProgram<Student>();
+		break;
+	}
+	default:
+		break;
+	}
+	return 0;
 }
