@@ -1,8 +1,32 @@
 ﻿#include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime> 
 using namespace std;
 
 //для структуры нужно будет переопределить оператор ==
+
+string names[5] = { "Vladimir", "Ivan", "Nikolay", "Roman", "Maxim" };
+int ages[5] = { 20, 21, 22, 23, 25 };
+
+struct Student {
+	int age;
+	string name;
+
+	Student() {
+		age = ages[rand() % 5];
+		name = names[rand() % 5];
+	}
+	friend ostream& operator<<(ostream& os, const Student& student) {
+		os << "name : " << student.name << " age: " << student.age << endl;
+		return os;
+	}
+	bool operator==(const Student& other);
+};
+
+bool Student::operator==(const Student& other) {
+	return ((age == other.age) && (name == other.name));
+}
 
 template<typename T>
 class Set {
@@ -27,6 +51,7 @@ public:
 	void intersectionOfSets(Set<T>*, Set<T>*);
 	void differenceOfSets(Set<T>*, Set<T>*);
 	void symmetricDifference(Set<T>*, Set<T>*);
+	bool subsetOfSets(Set<T>*, Set<T>*);
 
 	~Set() {
 		removeAll();
@@ -50,7 +75,7 @@ void Set<T>::unionOfSets(Set<T>* first, Set<T>* second) {
 	for (int i = 0; i < mas.size(); i++)
 	{
 		bool dobl = false;
-		for (int j = 0; j < forResult.size(); j++) 
+		for (int j = 0; j < forResult.size(); j++)
 		{
 			if (mas[i] == forResult[j]) {
 				dobl = true;
@@ -65,33 +90,34 @@ void Set<T>::unionOfSets(Set<T>* first, Set<T>* second) {
 	for (int i = 0; i < forResult.size(); i++)
 	{
 		cout << forResult[i] << endl;
-	}		
+	}
 }
 
 template<typename T>
 void Set<T>::intersectionOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> mas;
+	vector<T> masFirst;
+	vector<T> masSecond;
 	vector<T> forResult;
 	Node* temp = first->head;
 	Node* temp_2 = second->head;
 	while (temp) {
-		mas.push_back(temp->el);
+		masFirst.push_back(temp->el);
 		temp = temp->next;
 	}
 	while (temp_2) {
-		mas.push_back(temp_2->el);
+		masSecond.push_back(temp_2->el);
 		temp_2 = temp_2->next;
 	}
-	for (int i = 0; i < mas.size(); i++)
+	for (int i = 0; i < masFirst.size(); i++)
 	{
 		bool flag = false;
-		for (int j = 0; j < mas.size(); j++)
+		for (int j = 0; j < masSecond.size(); j++)
 		{
-			if (mas[i] == mas[j] && (i != j)) {
+			if (masFirst[i] == masSecond[j]) {
 				flag = true;
 				for (int h = 0; h < forResult.size(); h++)
 				{
-					if (mas[i] == forResult[h]) {
+					if (masFirst[i] == forResult[h]) {
 						flag = false;
 						break;
 					}
@@ -99,7 +125,7 @@ void Set<T>::intersectionOfSets(Set<T>* first, Set<T>* second) {
 			}
 		}
 		if (flag) {
-			forResult.push_back(mas[i]);
+			forResult.push_back(masFirst[i]);
 		}
 	}
 
@@ -175,6 +201,44 @@ void Set<T>::symmetricDifference(Set<T>* first, Set<T>* second) {
 	}
 }
 
+template<typename T>
+bool Set<T>::subsetOfSets(Set<T>* first, Set<T>* second) {
+	vector<T> masForFirst, masForSecond;
+	Node* temp = first->head;
+	Node* temp_2 = second->head;
+	while (temp) {
+		masForFirst.push_back(temp->el);
+		temp = temp->next;
+	}
+	while (temp_2) {
+		masForSecond.push_back(temp_2->el);
+		temp_2 = temp_2->next;
+	}
+	bool flag = false;
+	for (int i = 0; i < masForFirst.size(); i++)
+	{
+		for (int j = 0; j < masForSecond.size(); j++) {
+			if (masForFirst[i] == masForSecond[j]) {
+				flag = true;
+				break;
+			}
+			else {
+				flag = false;
+			}
+		}
+		if (flag == false) {
+			break;
+		}
+	}
+	if (flag) {
+		cout << "Первое множество является подмножеством второго множества" << endl;
+		return true;
+	}
+	else if (flag == false) {
+		cout << "Первое множество не является подмножеством второго множества" << endl;
+		return false;
+	}
+}
 
 template<typename T>
 bool Set<T>::isEmpty() {
@@ -244,16 +308,22 @@ void Set<T>::print() {
 	}
 }
 int main() {
-	Set<int>* first = new Set<int>();
-	first->addEl(10);
-	first->addEl(1488);
-	first->addEl(1945);
+	srand(static_cast<unsigned int>(time(0)));
+	setlocale(LC_ALL, "ru");
+	Set<Student>* first = new Set<Student>();
+	Student st1, st2, st3, st4, st5, st6, st7;
+	first->addEl(st1);
+	first->addEl(st2);
+	first->addEl(st3);
+	first->addEl(st4);
+	first->print();
+	cout << "---------------------" << endl;
+	Set<Student>* second = new Set<Student>();
+	second->addEl(st5);
+	second->addEl(st6);
+	second->addEl(st7);
+	second->print();
+	cout << "-----------------------" << endl;
 
-	Set<int>* second = new Set<int>();
-	second->addEl(10);
-	second->addEl(100);
-	second->addEl(1000);
-	second->addEl(1488);
-
-	first->symmetricDifference(first, second);
+	first->intersectionOfSets(first, second);
 }
