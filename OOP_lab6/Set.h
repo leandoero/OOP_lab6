@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -20,12 +20,13 @@ public:
 	void removeHead();
 	void print();
 	bool isEmpty();
+	int getSize();
 
-	void unionOfSets(Set<T>*, Set<T>*);
-	void intersectionOfSets(Set<T>*, Set<T>*);
-	void differenceOfSets(Set<T>*, Set<T>*);
-	void symmetricDifference(Set<T>*, Set<T>*);
-	bool subsetOfSets(Set<T>*, Set<T>*);
+	Set<T>* unionOfSets(Set<T>*);
+	void intersectionOfSets(Set<T>*);
+	void differenceOfSets(Set<T>*);
+	void symmetricDifference(Set<T>*);
+	bool subsetOfSets(Set<T>*);
 
 	~Set() {
 		removeAll();
@@ -33,23 +34,28 @@ public:
 };
 
 template<typename T>
-void Set<T>::unionOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> mas;
-	vector<T> forResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
+Set<T>* Set<T>::unionOfSets(Set<T>* other) {
+	int totalSize = getSize() + other->getSize();
+	int resultSize = 0;
+	T* mas = new T[totalSize];
+	T* forResult = new T[totalSize];
+	Set<T>* forEnd = new Set<T>();
+	Node* temp = head;
+	Node* temp_2 = other->head;
+
+	int i = 0;
 	while (temp) {
-		mas.push_back(temp->el);
+		mas[i++] = temp->el;
 		temp = temp->next;
 	}
 	while (temp_2) {
-		mas.push_back(temp_2->el);
+		mas[i++] = temp_2->el;
 		temp_2 = temp_2->next;
 	}
-	for (int i = 0; i < mas.size(); i++)
+	for (int i = 0; i < totalSize; i++)
 	{
 		bool dobl = false;
-		for (int j = 0; j < forResult.size(); j++)
+		for (int j = 0; j < resultSize; j++)
 		{
 			if (mas[i] == forResult[j]) {
 				dobl = true;
@@ -57,39 +63,46 @@ void Set<T>::unionOfSets(Set<T>* first, Set<T>* second) {
 			}
 		}
 		if (dobl == false) {
-			forResult.push_back(mas[i]);
+			forResult[resultSize++] = mas[i];
 		}
 	}
 
-	for (int i = 0; i < forResult.size(); i++)
+	for (int i = 0; i < resultSize; i++)
 	{
-		cout << forResult[i] << endl;
+		forEnd->addEl(forResult[i]);
 	}
+	delete[] mas;
+	mas = nullptr;
+	return forEnd;
 }
 
 template<typename T>
-void Set<T>::intersectionOfSets(Set<T>* first, Set<T>* second) {
-	vector<T> masFirst;
-	vector<T> masSecond;
-	vector<T> forResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
+void Set<T>::intersectionOfSets(Set<T>* other) {
+	int totalSize = getSize() + other->getSize();
+	int resultSize = 0;
+	T* masFirst = new T[getSize()];
+	T* masSecond = new T[other->getSize()];
+	T* forResult = new T[totalSize];
+	Node* temp = head;
+	Node* temp_2 = other->head;
+	int i = 0;
 	while (temp) {
-		masFirst.push_back(temp->el);
+		masFirst[i++] = temp->el;
 		temp = temp->next;
 	}
+	int j = 0;
 	while (temp_2) {
-		masSecond.push_back(temp_2->el);
+		masSecond[j++] = temp_2->el;
 		temp_2 = temp_2->next;
 	}
-	for (int i = 0; i < masFirst.size(); i++)
+	for (int i = 0; i < getSize(); i++)
 	{
 		bool flag = false;
-		for (int j = 0; j < masSecond.size(); j++)
+		for (int j = 0; j < other->getSize(); j++)
 		{
 			if (masFirst[i] == masSecond[j]) {
 				flag = true;
-				for (int h = 0; h < forResult.size(); h++)
+				for (int h = 0; h < resultSize; h++)
 				{
 					if (masFirst[i] == forResult[h]) {
 						flag = false;
@@ -99,21 +112,24 @@ void Set<T>::intersectionOfSets(Set<T>* first, Set<T>* second) {
 			}
 		}
 		if (flag) {
-			forResult.push_back(masFirst[i]);
+			forResult[resultSize++] = masFirst[i];
 		}
 	}
 
-	for (int i = 0; i < forResult.size(); i++)
+	for (int i = 0; i < resultSize; i++)
 	{
 		cout << forResult[i] << endl;
 	}
+	delete[] masFirst;
+	delete[] masSecond;
+	delete[] forResult;
 }
 
 template<typename T>
-void Set<T>::differenceOfSets(Set<T>* first, Set<T>* second) {
+void Set<T>::differenceOfSets(Set<T>* other) {
 	vector<T> masForFirst, masForSecond, masForResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
+	Node* temp = head;
+	Node* temp_2 = other->head;
 	while (temp) {
 		masForFirst.push_back(temp->el);
 		temp = temp->next;
@@ -143,11 +159,11 @@ void Set<T>::differenceOfSets(Set<T>* first, Set<T>* second) {
 }
 
 template<typename T>
-void Set<T>::symmetricDifference(Set<T>* first, Set<T>* second) {
+void Set<T>::symmetricDifference(Set<T>* other) {
 	vector<T>mas;
 	vector<T>masForResult;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
+	Node* temp = head;
+	Node* temp_2 = other->head;
 	while (temp) {
 		mas.push_back(temp->el);
 		temp = temp->next;
@@ -176,10 +192,10 @@ void Set<T>::symmetricDifference(Set<T>* first, Set<T>* second) {
 }
 
 template<typename T>
-bool Set<T>::subsetOfSets(Set<T>* first, Set<T>* second) {
+bool Set<T>::subsetOfSets(Set<T>* other) {
 	vector<T> masForFirst, masForSecond;
-	Node* temp = first->head;
-	Node* temp_2 = second->head;
+	Node* temp = head;
+	Node* temp_2 = other->head;
 	while (temp) {
 		masForFirst.push_back(temp->el);
 		temp = temp->next;
@@ -205,11 +221,11 @@ bool Set<T>::subsetOfSets(Set<T>* first, Set<T>* second) {
 		}
 	}
 	if (flag) {
-		cout << "Ìíîæåñòâî ÿâëÿåòñÿ ïîäìíîæåñòâîì" << endl;
+		cout << "ÃŒÃ­Ã®Ã¦Ã¥Ã±Ã²Ã¢Ã® Ã¿Ã¢Ã«Ã¿Ã¥Ã²Ã±Ã¿ Ã¯Ã®Ã¤Ã¬Ã­Ã®Ã¦Ã¥Ã±Ã²Ã¢Ã®Ã¬" << endl;
 		return true;
 	}
 	else if (flag == false) {
-		cout << "Ìíîæåñòâî íå ÿâëÿåòñÿ ïîäìíîæåñòâîì" << endl;
+		cout << "ÃŒÃ­Ã®Ã¦Ã¥Ã±Ã²Ã¢Ã® Ã­Ã¥ Ã¿Ã¢Ã«Ã¿Ã¥Ã²Ã±Ã¿ Ã¯Ã®Ã¤Ã¬Ã­Ã®Ã¦Ã¥Ã±Ã²Ã¢Ã®Ã¬" << endl;
 		return false;
 	}
 }
@@ -280,4 +296,17 @@ void Set<T>::print() {
 		cout << temp->el << endl;
 		temp = temp->next;
 	}
+}
+template<typename T>
+int Set<T>::getSize() {
+	if (isEmpty()) {
+		return 0;
+	}
+	int count = 0;
+	Node* temp = head;
+	while (temp) {
+		count += 1;
+		temp = temp->next;
+	}
+	return count;
 }

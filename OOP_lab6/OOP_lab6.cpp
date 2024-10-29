@@ -1,4 +1,5 @@
-﻿#include "Set.h"
+﻿
+#include "Set.h"
 #include "Student.h"
 
 template<typename T>
@@ -82,9 +83,9 @@ void workingWithMultiple(Set<T>* set) {
 
 template<typename T>
 void StartProgram() {
-	Set<T>* setFirst = new Set<T>();
-	Set<T>* setSecond = new Set<T>();
 	int index;
+	Set<T>* set = new Set<T>();
+	Set<T>* other = new Set<T>();
 	do {
 		system("cls");
 		cout << "Меню: \n" <<
@@ -98,18 +99,18 @@ void StartProgram() {
 		{
 		case 1: {
 			system("cls");
-			workingWithMultiple(setFirst);
+			workingWithMultiple(set);
 			break;
 		}
 		case 2: {
 			system("cls");
-			workingWithMultiple(setSecond);
+			workingWithMultiple(other);
 			break;
 		}
 		case 3: {
 			int index;
 
-			if (setFirst == nullptr || setSecond == nullptr) {
+			if (set == nullptr || other == nullptr) {
 				cout << "Множества не созданы" << endl;
 			}
 			do {
@@ -125,26 +126,31 @@ void StartProgram() {
 				switch (index)
 				{
 				case 1: {
+					Set<T>* result;
 					system("cls");
-					setFirst->unionOfSets(setFirst, setSecond);
+					result = set->unionOfSets(other);
+					cout << "============" << endl;
+					result->print();
+					delete result;
+					result = nullptr;
 					system("pause");
 					break;
 				}
 				case 2: {
 					system("cls");
-					setFirst->intersectionOfSets(setFirst, setSecond);
+					set->intersectionOfSets(other);
 					system("pause");
 					break;
 				}
 				case 3: {
 					system("cls");
-					setFirst->differenceOfSets(setFirst, setSecond);
+					set->differenceOfSets(other);
 					system("pause");
 					break;
 				}
 				case 4: {
 					system("cls");
-					setFirst->symmetricDifference(setFirst, setSecond);
+					set->symmetricDifference(other);
 					system("pause");
 					break;
 				}
@@ -159,13 +165,13 @@ void StartProgram() {
 					{
 					case 1: {
 						system("cls");
-						setFirst->subsetOfSets(setFirst, setSecond);
+						set->subsetOfSets(other);
 						system("pause");
 						break;
 					}
 					case 2: {
 						system("cls");
-						setSecond->subsetOfSets(setSecond, setFirst);
+						set->subsetOfSets(other);
 						system("pause");
 						break;
 					}
@@ -180,13 +186,15 @@ void StartProgram() {
 			} while (index != 6);
 		}
 		default:
+		{
 			break;
 		}
-	} while (index != 4);
-	delete setFirst;
-	delete setSecond;
-	setFirst = nullptr;
-	setSecond = nullptr;
+		} 
+	}while (index != 4);
+	delete set;
+	delete other;
+	set = nullptr;
+	other = nullptr;
 }
 
 int main() {
