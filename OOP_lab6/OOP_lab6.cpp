@@ -26,7 +26,6 @@ void workingWithMultiple(Set<T>* set) {
 				cout << "Введите число: ";
 				cin >> num;
 				set->addEl(num);
-				system("pause");
 				break;
 			}
 			else if constexpr (std::is_same_v<T, double>) {
@@ -35,14 +34,12 @@ void workingWithMultiple(Set<T>* set) {
 				cout << "Введите число: ";
 				cin >> num;
 				set->addEl(num);
-				system("pause");
 				break;
 			}
 			else {
 				system("cls");
 				Student student;
 				set->addEl(student);
-				system("pause");
 				break;
 			}
 		}
@@ -89,8 +86,8 @@ void StartProgram() {
 	do {
 		system("cls");
 		cout << "Меню: \n" <<
-			"1. Создать множество №1\n" <<
-			"2. Создать множество №2\n" <<
+			"1. Работать с множеством №1\n" <<
+			"2. Работать с множеством №2\n" <<
 			"3. Операции над множествами\n" <<
 			"4. Выход\n" << endl;
 		cout << "Ввод: ";
@@ -129,7 +126,6 @@ void StartProgram() {
 					Set<T>* result;
 					system("cls");
 					result = set->unionOfSets(other);
-					cout << "============" << endl;
 					result->print();
 					delete result;
 					result = nullptr;
@@ -137,20 +133,32 @@ void StartProgram() {
 					break;
 				}
 				case 2: {
+					Set<T>* result;
 					system("cls");
-					set->intersectionOfSets(other);
+					result = set->intersectionOfSets(other);
+					result->print();
+					delete result;
+					result = nullptr;
 					system("pause");
 					break;
 				}
 				case 3: {
+					Set<T>* result;
 					system("cls");
-					set->differenceOfSets(other);
+					result = set->differenceOfSets(other);
+					result->print();
+					delete result;
+					result = nullptr;
 					system("pause");
 					break;
 				}
 				case 4: {
+					Set<T>* result;
 					system("cls");
-					set->symmetricDifference(other);
+					result = set->symmetricDifference(other);
+					result->print();
+					delete result;
+					result = nullptr;
 					system("pause");
 					break;
 				}
@@ -164,14 +172,28 @@ void StartProgram() {
 					switch (index)
 					{
 					case 1: {
+						bool result;
 						system("cls");
-						set->subsetOfSets(other);
+						result = set->subsetOfSets(other);
+						if (result == true) {
+							cout << "Является подмножеством" << endl;
+						}
+						else {
+							cout << "Не является подмножеством" << endl;
+						}
 						system("pause");
 						break;
 					}
 					case 2: {
+						bool result;
 						system("cls");
-						set->subsetOfSets(other);
+						result = other->subsetOfSets(set);
+						if (result == true) {
+							cout << "Является подмножеством" << endl;
+						}
+						else {
+							cout << "Не является подмножеством" << endl;
+						}
 						system("pause");
 						break;
 					}
